@@ -7,6 +7,7 @@ import hashlib
 
 import rediswebpy
 import views
+import config
 
 urls = (
 		    '/', 'index',
@@ -35,7 +36,8 @@ else:
 def getokbuydb():
 	global okbuydb
 	if not okbuydb:
-		okbuydb = web.database(dbn="mysql",user="yubo",pw="okbuy.yubo",db="okaybuy",host="10.1.1.51")
+		okbuydb = web.database(dbn="mysql",user=config.userdb["user"],pw=config.userdb["pw"],
+				db=config.userdb["db"],host=config.userdb["host"])
 	return okbuydb
 
 class add_sale():
