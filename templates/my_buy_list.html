@@ -1,0 +1,30 @@
+$def with (buyInfos)
+<div>
+	$if len(buyInfos)<=0:
+		<div class="hero-unit"><h2>暂无我的购买信息</h2></div>
+	$else:
+		<table class="table table-striped">
+		<thead>
+		<tr>
+			<th>#</th>
+			<th>名称</th>
+			<th>开始时间</th>
+			<th>结束时间</th>
+			<th>起拍价格</th>
+			<th>最低加价</th>
+			<th>宝贝描述</th>
+		</tr></thead>
+		<tbody>
+		$for info in buyInfos:
+			<tr>
+				<td>$info.get('info_id')</td>
+				<td>$info.get('product_name')</td>
+				<td>$info.get('starttime')</td>
+				<td>$info.get('endtime')</td>
+				<td>$info.get('start_money')</td>
+				<td>$info.get('per_add_money')</td>
+				<td><pre>$info.get('product_desc')</pre></td>
+			</tr>
+		</tbody>
+		</table>
+</div>

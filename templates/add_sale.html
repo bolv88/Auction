@@ -1,0 +1,48 @@
+	<div class="hero-unit" style="padding:20px 60px">
+		<h2 style="color:#999">添加拍卖商品</h2>
+		<form class="form-horizontal" method="post" action="/account/add_sale">
+			<fieldset>
+				<div class="control-group">
+					<label class="control-label" for="input01">拍卖名称</label>
+					<div class="controls">
+						<input class="input-xlarge" id="input01" type="text" name="product_name" placeholder="宝贝名称"/>
+					</div>
+				</div>
+				<div class="control-group">
+					<label class="control-label" for="input02">拍卖开始时间</label>
+					<div class="controls">
+						<input class="input-xlarge" type="text" id="input02" name="starttime" placeholder="YYYY-mm-dd HH:ii:ss"/>
+					</div>
+				</div>
+				<div class="control-group">
+					<label class="control-label" for="input03">拍卖结束时间</label>
+					<div class="controls">
+						<input  class="input-xlarge" type="text" id="input03" name="endtime" placeholder="YYYY-mm-dd HH:ii:ss"/>
+					</div>
+				</div>
+				<div class="control-group">
+					<label class="control-label" for="input04">起拍价格</label>
+					<div class="controls">
+						<input  class="input-xlarge" type="text" id="input04" name="start_money" placeholder="整数, 最低为1"/>
+					</div>
+				</div>
+				<div class="control-group">
+					<label class="control-label" for="input05">最低加价金额</label>
+					<div class="controls">
+						<input  class="input-xlarge" type="text" id="input05" name="per_add_money" placeholder="整数, 最低1"/>
+					</div>
+				</div>
+				<div class="control-group">
+					<label class="control-label" for="input06">宝贝描述</label>
+					<div class="controls">
+						<textarea  class="input-xlarge" id="input06" name="product_desc" placeholder="宝贝描述"></textarea>
+					</div>
+				</div>
+				<div class="form-actions">
+					<button class="btn btn-primary" type="submit">提交</button>
+				</div>
+			</fieldset>
+		</form>
+
+	</div>
+
