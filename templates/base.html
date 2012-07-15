@@ -1,0 +1,129 @@
+$def with (islogin,userInfo,page)
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>好乐买内部拍卖行</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <!-- Le styles -->
+    <link href="/static/css/bootstrap.css" rel="stylesheet">
+    <style type="text/css">
+      body {
+        padding-top: 60px;
+        padding-bottom: 40px;
+      }
+      .sidebar-nav {
+        padding: 9px 0;
+      }
+    </style>
+
+    <!-- Le HTML5 shim, for IE6-8 support of HTML5 elements -->
+    <!--[if lt IE 9]>
+      <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+
+    <!-- Le fav and touch icons -->
+    <link rel="shortcut icon" href="../assets/ico/favicon.ico">
+    
+  </head>
+  <body>
+	<div class="navbar navbar-fixed-top">
+		<div class="navbar-inner">
+			<div class="container-fluid">
+				<a class="brand" href="#">好乐买拍卖行</a>
+				<div class="btn-group pull-right">
+					$if islogin:
+						<a href="#" data-toggle="dropdown" class="btn dropdown-toggle">
+							<i class="icon-user"></i>
+								$:userInfo.get('Name')
+							<span class="caret"></span>
+						</a>
+						<div class="dropdown-menu">
+							<li><a href="/account">我的账户</a></li>
+							<li class="divider"></li>
+							<li><a href="/logout">退出</a></li>
+						</div>
+					$else:
+						<a href="#" class="mylogin btn" data toggle="modal">Login</a>
+					
+				</div>
+				<div class="nav-collapse">
+					<ul class="nav">
+						<li class="active">
+							<a href="" >首页</a>
+						</li>
+						<li>
+							<a href="">Abount</a>
+						</li>
+						<li>
+							<a href="">Contact</a>
+						</li>
+					</ul>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="container">
+		$:page
+	</div>
+
+
+	<hr/>
+	<footer>
+	<p>@blublu 2012</p>
+	</footer>
+
+
+	<div class="modal hide" id="myModal">
+		<div class="modal-header">
+			<button type="button" class="close" data-dismiss="modal">×</button>
+			<h3>用户登陆(ums用户)</h3>
+		</div>
+		<div class="modal-body">
+			<form class="well" id="login_form">
+				<label>用户名:</label>
+				<input type="text" name="username" class="span3" placeholder="请输入UMS用户名">
+				<label>密  码:</label>
+				<input type="password" name="password" class="span3" placeholder="请输入UMS密码">
+			</form>
+		</div>
+		<div class="modal-footer">
+			<a href="#" class="btn" data-dismiss="modal">取消</a>
+			<a href="#" class="btn btn-primary" id="login_submit">登陆</a>
+		</div>
+	</div>
+	<script src="/static/js/jquery-1.7.2.min.js"></script>
+	<script src="/static/js/bootstrap.js"></script>
+	<script>
+		$$('.dropdown-toggle').dropdown();
+		$$('.mylogin').click(function(){
+			$$("#myModal").modal();
+		});
+		$$(document).ready(function(){
+			$$("#login_submit").click(function(){
+				$$.ajax({
+					type:"POST",
+					url:"/login",
+					dataType:"json",
+					data:$$("#login_form").serialize() ,
+					success:function(obj){
+						if(obj.rsCode>=0){
+							location.reload();
+						}else{
+							alert(obj.Msg);
+						}
+					},
+					error:function(obj){
+						alert("服务器出错!");
+					}
+				});
+			});
+		});
+	</script>
+	
+  </body>
+</html>
+
