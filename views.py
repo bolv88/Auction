@@ -9,3 +9,12 @@ render = web.template.render('templates/',
 		    globals=t_globals)
 def index_data():
 	return render.index()
+
+def add_sale():
+	return render.add_sale()
+
+def list_sale(saleInfos):
+	return render.my_sale_list(saleInfos)
+
+def list_buy(buyInfos):
+	return render.my_buy_list(buyInfos)

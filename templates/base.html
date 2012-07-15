@@ -3,7 +3,7 @@ $def with (islogin,userInfo,page)
 <html lang="en">
   <head>
     <meta charset="utf-8">
-    <title>好乐买内部拍卖行</title>
+    <title>斧头帮拍卖行</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="">
     <meta name="author" content="">
@@ -33,7 +33,7 @@ $def with (islogin,userInfo,page)
 	<div class="navbar navbar-fixed-top">
 		<div class="navbar-inner">
 			<div class="container-fluid">
-				<a class="brand" href="#">好乐买拍卖行</a>
+				<a class="brand" href="#">斧头帮拍卖行</a>
 				<div class="btn-group pull-right">
 					$if islogin:
 						<a href="#" data-toggle="dropdown" class="btn dropdown-toggle">
@@ -52,14 +52,14 @@ $def with (islogin,userInfo,page)
 				</div>
 				<div class="nav-collapse">
 					<ul class="nav">
-						<li class="active">
-							<a href="" >首页</a>
+						<li>
+							<a href="/" >首页</a>
 						</li>
 						<li>
-							<a href="">Abount</a>
+							<a href="/account/sale">我拍卖的</a>
 						</li>
 						<li>
-							<a href="">Contact</a>
+							<a href="/account/buy">我购买到的</a>
 						</li>
 					</ul>
 				</div>
@@ -103,6 +103,17 @@ $def with (islogin,userInfo,page)
 			$$("#myModal").modal();
 		});
 		$$(document).ready(function(){
+			$$("ul.nav li a").each(function(){
+				var l_pathname = location.pathname;
+				var the_href = $$(this).attr("href");
+				if(l_pathname==the_href){
+					$$(this).parents("li:first").addClass("active");
+					return false;
+				}else if(the_href.length>1 && l_pathname.indexOf(the_href)==0){
+					$$(this).parents("li:first").addClass("active");
+					return false;
+				}
+			});
 			$$("#login_submit").click(function(){
 				$$.ajax({
 					type:"POST",
@@ -123,6 +134,7 @@ $def with (islogin,userInfo,page)
 			});
 		});
 	</script>
+
 	
   </body>
 </html>
