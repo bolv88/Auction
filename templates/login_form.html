@@ -1,0 +1,42 @@
+$def with (jumpPath)
+	<div class="hero-unit" style="padding:20px 60px">
+		<h2 style="color:#999">请登录：</h2>
+		<form class="well" id="login_form_page">
+			<label>用户名:</label>
+			<input type="text" name="username" class="span3" placeholder="请输入UMS用户名">
+			<label>密  码:</label>
+			<input type="password" name="password" class="span3" placeholder="请输入UMS密码">
+
+			<label></label>
+			<button type="button" id="login_submit_page" class="btn btn-primary">登陆</button>
+		</form>
+
+
+	</div>
+	<script>
+		if(typeof tostats == "undefined"){
+			tostats = [];
+		}
+		tostats.push(function(){
+			$$("#login_submit_page").click(function(){
+				$$.ajax({
+					type:"POST",
+					url:"/login",
+					dataType:"json",
+					data:$$("#login_form_page").serialize() ,
+					success:function(obj){
+						if(obj.rsCode>=0){
+							location.href = "$:jumpPath";
+						}else{
+							alert(obj.Msg);
+						}
+					},
+					error:function(obj){
+						alert("服务器出错!");
+					}
+				});
+			});
+		});
+
+	</script>
+
