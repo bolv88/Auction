@@ -3,7 +3,9 @@ import redis
 
 import web
 import config
+import hashlib
 
+okbuydb = None
 redisDb = None
 
 def getUserInfo():
@@ -65,7 +67,7 @@ def getokbuydb():
 		okbuydb = web.database(dbn="mysql",user=config.userdb["user"],pw=config.userdb["pw"],
 				db=config.userdb["db"],host=config.userdb["host"])
 	return okbuydb
-def checkUser(self, username, password):
+def checkUser(username, password):
 	db = getokbuydb()
 	checkrs = db.where('Admin', Name=username, Pwd=hashlib.md5(password).hexdigest())
 	users = checkrs.list()

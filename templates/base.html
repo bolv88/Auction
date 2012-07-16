@@ -132,6 +132,12 @@ $def with (islogin,userInfo,page)
 					}
 				});
 			});
+			if(typeof tostats != "undefined"){
+				$$(tostats).each(function(key,val){
+					val();
+				});
+			}
+
 		});
 	</script>
 

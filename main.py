@@ -10,9 +10,11 @@ import models
 import views
 import config
 
+from functools import wraps
+
 urls = (
 		    '/', 'index',
-			'/login','login',
+			'/login(/.*)?','login',
 			'/logout','logout',
 
 			'/account/sale/?','account_sale',
@@ -37,12 +39,30 @@ else:
 
 render = web.template.render('templates/')
 
+def required_login(f=None,redirect = True):
+	def decorator(func):
+		@wraps(func)
+		def wrapper(req,*args,**kwds):
+			global session
+			user = session.get("islogin",False)
+			if user == False:
+				paths = web.ctx.homepath + web.ctx.fullpath
+				if redirect:
+					raise web.seeother("/login%s" % (paths))
+				else:
+					return back_json_data({"rsCode":-5, "Msg":"您需要登陆后再进行该操作"})
+			else:
+				return func(req, *args, **kwds)
+		return wrapper
+	return decorator
 
 class add_sale():
+	@required_login()
 	def GET(self):
 		return render.base(islogin = session.get('islogin',False), 
 				userInfo = session.get('userInfo',False), 
 				page=views.add_sale())
+	@required_login()
 	def POST(self):
 		input = web.input()
 		save_rs = models.save_sale_info(
@@ -56,12 +76,14 @@ class add_sale():
 		return json.dumps(save_rs)
 
 class account_sale:
+	@required_login()
 	def GET(self, id=0):
 		if id>0:
 			return self.show_one(id)
 		else:
 			return self.list()
 
+	@required_login()
 	def list(self):
 		userId = session.userInfo.get("ID")
 		saleInfos = models.getUserSaleInfo(userId)
@@ -71,13 +93,16 @@ class account_sale:
 				page=views.list_sale(saleInfos))
 
 
+	@required_login()
 	def show_one(self,sale_id):
 		return sale_id
 
 class account_buy:
+	@required_login()
 	def GET(self):
 		return self.list()
 	
+	@required_login()
 	def list(self):
 		userId = session.userInfo.get("ID")
 		buyInfos = models.getUserBuyInfo(userId)
@@ -92,7 +117,7 @@ class index:
 		return render.base(islogin = session.get('islogin',False), userInfo = session.get('userInfo',False), page=views.index_data())
 
 class login:
-	def POST(self):
+	def POST(self, jumpPath=''):
 		input = web.input(username=None, password=None)
 		if not input.username or not input.password:
 			return json.dumps({"Msg":"用户名或密码为空, 请检查!","rsCode":-1})
@@ -103,10 +128,14 @@ class login:
 			#set session
 			session.islogin = True
 			session.userInfo = checkrs
-
 			return json.dumps({"Msg":"登陆成功", "rsCode":1})
-	def GET(self):
-		pass
+
+	def GET(self, jumpPath = '/'):
+		return render.base(islogin = session.get('islogin',False), 
+				userInfo = session.get('userInfo',False), 
+				page=views.login_form(jumpPath))
+
+
 
 class logout:
 	def GET(self):

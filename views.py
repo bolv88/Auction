@@ -18,3 +18,6 @@ def list_sale(saleInfos):
 
 def list_buy(buyInfos):
 	return render.my_buy_list(buyInfos)
+
+def login_form(jumpPath):
+	return render.login_form(jumpPath)
