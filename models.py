@@ -67,6 +67,7 @@ def getokbuydb():
 		okbuydb = web.database(dbn="mysql",user=config.userdb["user"],pw=config.userdb["pw"],
 				db=config.userdb["db"],host=config.userdb["host"])
 	return okbuydb
+
 def checkUser(username, password):
 	db = getokbuydb()
 	checkrs = db.where('Admin', Name=username, Pwd=hashlib.md5(password).hexdigest())
@@ -76,8 +77,29 @@ def checkUser(username, password):
 	else:
 		return users[0]
 
+def getLatestSale(num=3):
+	rdb = getRedisDb()
+	saleIds = rdb.lrange(config.redisdb_config["saleids_key"], 0, num)
+
+	return getSaleInfos(saleIds)
+	
+def getSaleInfos(saleIds):
+	rdb = getRedisDb()
+	saleInfos = []
+	if len(saleIds)>0:
+		pipe = rdb.pipeline()
+		for saleId in saleIds:
+			pipe.hgetall(config.redisdb_config['sale_info_pre']+str(saleId))
+		saleInfos = pipe.execute()
+
+	return saleInfos
+
 def getRedisDb():
 	global redisDb
 	if not redisDb:
 		redisDb = redis.Redis()
 	return redisDb
+
+
+
+

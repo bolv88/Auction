@@ -7,8 +7,8 @@ t_globals = dict(
 )
 render = web.template.render('templates/',  
 		    globals=t_globals)
-def index_data():
-	return render.index()
+def index_data(latestSales):
+	return render.index(latestSales)
 
 def add_sale():
 	return render.add_sale()
@@ -21,3 +21,6 @@ def list_buy(buyInfos):
 
 def login_form(jumpPath):
 	return render.login_form(jumpPath)
+
+def show_detail(saleInfo):
+	return render.show_detail(saleInfo)

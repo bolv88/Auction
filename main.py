@@ -13,19 +13,20 @@ import config
 from functools import wraps
 
 urls = (
-		    '/', 'index',
-			'/login(/.*)?','login',
-			'/logout','logout',
+	    '/', 'index',
+		'/login(/.*)?','login',
+		'/logout','logout',
+		'/product/(\d*)', 'product',
 
-			'/account/sale/?','account_sale',
-			'/account/sale/(\d*)','account_sale',
-			
-			'/account/add_sale/?', 'add_sale',
-			'/account/alter_sale/(\d*)','alter_sale',
+		'/account/sale/?','account_sale',
+		'/account/sale/(\d*)','account_sale',
+		
+		'/account/add_sale/?', 'add_sale',
+		'/account/alter_sale/(\d*)','alter_sale',
 
-			'/account/buy/?','account_buy',
-			'/account/buy/(\d*)','account_buy',
-		)
+		'/account/buy/?','account_buy',
+		'/account/buy/(\d*)','account_buy',
+	)
 
 okbuydb = None
 app = web.application(urls, globals())
@@ -55,6 +56,31 @@ def required_login(f=None,redirect = True):
 				return func(req, *args, **kwds)
 		return wrapper
 	return decorator
+
+#产品
+class product():
+	def GET(self, saleId):
+		saleId = int(saleId)
+		if saleId<=0:
+			return "编号错误"
+		
+		saleInfos = models.getSaleInfos([saleId])
+
+		if len(saleInfos)<1:
+			return "未找到拍品信息"
+
+		return render.base(islogin = session.get('islogin',False), 
+				userInfo = session.get('userInfo',False), 
+				page=views.show_detail(saleInfos[0]))
+
+	@required_login()
+	def POST(self, saleId):
+		#锁定
+		#检查是否高于起拍价格
+		#查找当前最高价查看是否高于当前价格
+		#查看是否满足最低加价要求
+		#查看时间是否超期
+		pass
 
 class add_sale():
 	@required_login()
@@ -114,7 +140,12 @@ class account_buy:
 
 class index:
 	def GET(self,name=''):
-		return render.base(islogin = session.get('islogin',False), userInfo = session.get('userInfo',False), page=views.index_data())
+		latestSales = models.getLatestSale(3)
+		return render.base(islogin = session.get('islogin',False), userInfo = session.get('userInfo',False), 
+				page=views.index_data(latestSales))
+
+	def POST(self):
+		pass
 
 class login:
 	def POST(self, jumpPath=''):
