@@ -10,6 +10,8 @@ import models
 import views
 import config
 
+import time
+
 from functools import wraps
 
 urls = (
@@ -51,7 +53,7 @@ def required_login(f=None,redirect = True):
 				if redirect:
 					raise web.seeother("/login%s" % (paths))
 				else:
-					return back_json_data({"rsCode":-5, "Msg":"您需要登陆后再进行该操作"})
+					return json.dumps({"rsCode":-5, "Msg":"您需要登陆后再进行该操作"})
 			else:
 				return func(req, *args, **kwds)
 		return wrapper
@@ -75,12 +77,54 @@ class product():
 
 	@required_login()
 	def POST(self, saleId):
-		#锁定
+		#获取锁
+		if not models.getAuctionLock(saleId):
+			return json.dumps({"Msg":"获取锁失败", "rsCode":-10})
+		#
+		try:
+			rs = self._setpr(saleId)
+			models.releaseAuctionLock(saleId)
+			return rs
+		except Exception,e:
+			#解锁
+			models.releaseAuctionLock(saleId)
+			return json.dumps({"rsCode":-12, "Msg":"价格设置失败"})
+
+
+	def _setpr(self, saleId):
+		input = web.input()
+		saleInfos = models.getSaleInfos([saleId])
+		if len(saleInfos)<1:
+			return {"Msg":"未找到拍品信息", "rsCode":-7}
+		saleInfo = saleInfos[0]
+
+		#状态是否正常 =todo
+		#时间是否正常
+		nowTime = time.strftime("%Y-%m-%d %H:%M:%S",time.localtime(time.time()))
+		if nowTime < saleInfo.get("starttime"):
+			return {"Msg":"拍卖时间未到", "rsCode":-8}
+
+		if nowTime > saleInfo.get("endtime"):
+			return {"Msg":"拍卖时间已过", "rsCode":-9}
+
+		
 		#检查是否高于起拍价格
+		salePr = input.get("pr")
+		try:
+			salePr = int(salePr)
+			startMoney = saleInfo.get("start_money", 0)
+			startMoney = int(startMoney)
+			if salePr <= startMoney:
+				return {"Msg":"人不能太小气, 价格都低于起拍价了 ...", "rsCode":-12}
+		except Exception, e:
+			return {"Msg":"hi, 价格必须为数字, 请检查价格 ... ", "rsCode": -11}
+
 		#查找当前最高价查看是否高于当前价格
+		
 		#查看是否满足最低加价要求
-		#查看时间是否超期
 		pass
+
+
 
 class add_sale():
 	@required_login()

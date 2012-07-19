@@ -3,22 +3,63 @@ $def with (saleInfo)
 <div class="container">
 	<div class="well">
 		<h2>$:saleInfo.get("product_name")</h2>
+		<p>
+			$:saleInfo.get("product_desc")
+		</p>
 	</div>
 	
 	<div class="row">
-		<div class="span6" style='padding-left:20px;'>
-			<form class="well form-inline">
-				<input class="input-medium " type="text">
-				<button class="btn" type="submit">出价</button>
-			</form>
+		<div class="span3 well" style='padding-left:20px;'>
 			起拍价格: $:saleInfo.get("start_money")<br/>
 			最低加价: $:saleInfo.get("per_add_money")<br/>
 			起拍时间: $:saleInfo.get("starttime")<br/>
 			结束时间: $:saleInfo.get("endtime")<br/>
-			$:saleInfo.get("product_desc")
 		</div>
-		<div class="span5">
+		<div class="span5 well">
+			<form class="form-inline" id="pr_form">
+				<input class="input-medium" name="pr" type="text">
+				<button class="btn" id="pr_form_btn" type="button">出价</button>
+			</form>
+
 			<p>出价历史:</p>
+			<div id="pr_history">
+				<p>起拍价: $:saleInfo.get("start_money")</p>
+			</div>
+			
 		</div>
 	</div>
 </div>
+
+<script>
+	$$(document).ready(function(){
+		$("#pr_form_bth").click(function(){
+			$$.ajax({
+				type:"POST",
+				url:"/product/$:saleInfo.get('info_id')",
+				dataType:"json",
+				data:$$("#pr_form").serialize() ,
+				success:function(obj){
+					if(obj.rsCode>=0){
+						//出价成功
+						alert("出价成功");
+					}else{
+						alert(obj.Msg);
+					}
+				},
+				error:function(obj){
+					alert("服务器出错!");
+				}
+			});
+
+		});
+
+	});
+</script>
+
+
+
+
+
+
+
+

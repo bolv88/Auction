@@ -8,9 +8,20 @@ import hashlib
 okbuydb = None
 redisDb = None
 
+def getAuctionLock(id):
+	pass
+def releaseAuctionLock(id):
+	pass
+
 def getUserInfo():
 	session = web.config.get('_session')
 	return session.get("userInfo",False)
+
+
+def getSaleList(infoId):
+	rdb = getRedisDb()
+	saleInfos = rdb.lrange(config.redisdb_config['salepr_list_pre']+str(infoId), 0, 20)
+	return saleInfos
 
 
 def save_sale_info(product_name, starttime, endtime, start_money, per_add_money,product_desc):
