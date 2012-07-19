@@ -120,7 +120,7 @@ class product():
 			return {"Msg":"hi, 价格必须为数字, 请检查价格 ... ", "rsCode": -11}
 
 		#查找当前最高价查看是否高于当前价格
-		
+		saleLists = models.gets
 		#查看是否满足最低加价要求
 		pass
 

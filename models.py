@@ -18,6 +18,12 @@ def getUserInfo():
 	return session.get("userInfo",False)
 
 
+def getMaxAuctionPr(infoId):
+	saleInfos = getSaleList(infoId)
+	if len(saleInfos)<1:
+		return 0
+	return int(saleInfos[0])
+
 def getSaleList(infoId):
 	rdb = getRedisDb()
 	saleInfos = rdb.lrange(config.redisdb_config['salepr_list_pre']+str(infoId), 0, 20)
