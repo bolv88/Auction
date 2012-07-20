@@ -75,7 +75,7 @@ class product():
 				userInfo = session.get('userInfo',False), 
 				page=views.show_detail(saleInfos[0]))
 
-	@required_login()
+	@required_login(redirect=False)
 	def POST(self, saleId):
 		#获取锁
 		if not models.getAuctionLock(saleId):
@@ -84,9 +84,10 @@ class product():
 		try:
 			rs = self._setpr(saleId)
 			models.releaseAuctionLock(saleId)
-			return rs
+			return json.dumps(rs)
 		except Exception,e:
 			#解锁
+			print e
 			models.releaseAuctionLock(saleId)
 			return json.dumps({"rsCode":-12, "Msg":"价格设置失败"})
 
@@ -120,10 +121,17 @@ class product():
 			return {"Msg":"hi, 价格必须为数字, 请检查价格 ... ", "rsCode": -11}
 
 		#查找当前最高价查看是否高于当前价格
-		saleLists = models.gets
+		maxAuctionPr = models.getMaxAuctionPr(saleId)
+		if maxAuctionPr >= salePr:
+			return {"rsCode":-13, "Msg":"sorry, your price is less than others"}
 		#查看是否满足最低加价要求
-		pass
-
+		perAddMoney = saleInfo.get("per_add_money",0)
+		perAddMoney = int(perAddMoney)
+		if (salePr-maxAuctionPr) <  perAddMoney:
+			return {"rsCode":-14, "Msg":"sorry the min add pr is"+str(perAddMoney)}
+		#save the money
+		models.addSaleList(saleId, salePr)
+		return {"rsCode":1, "Msg":"success: "+str(salePr)}
 
 
 class add_sale():

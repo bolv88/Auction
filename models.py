@@ -5,13 +5,28 @@ import web
 import config
 import hashlib
 
+import time
+
 okbuydb = None
 redisDb = None
 
 def getAuctionLock(id):
-	pass
+	rdb = getRedisDb()
+	lockKey = config.redisdb_config['sale_lock_pre']+str(id)
+	for i in range(0,10):
+		t = rdb.incr(lockKey)
+		if 1==t:
+			rdb.expire(lockKey, 10)
+			return True
+		time.sleep(1)
+
+	return false
+
+	
 def releaseAuctionLock(id):
-	pass
+	rdb = getRedisDb()
+	t = rdb.set(config.redisdb_config['sale_lock_pre']+str(id), 0)
+	return True
 
 def getUserInfo():
 	session = web.config.get('_session')
@@ -24,9 +39,20 @@ def getMaxAuctionPr(infoId):
 		return 0
 	return int(saleInfos[0])
 
+def addSaleList(infoId, pr):
+	rdb = getRedisDb()
+	userInfo = getUserInfo()
+	userId = userInfo.get("ID")
+	userName = userInfo.get("Name")
+	saveKey = config.redisdb_config['salepr_list_pre']+str(infoId)
+	rdb.lpush(saveKey, userName)
+	rdb.lpush(saveKey, userId)
+	rdb.lpush(saveKey, pr)
+	return True
+
 def getSaleList(infoId):
 	rdb = getRedisDb()
-	saleInfos = rdb.lrange(config.redisdb_config['salepr_list_pre']+str(infoId), 0, 20)
+	saleInfos = rdb.lrange(config.redisdb_config['salepr_list_pre']+str(infoId), 0, 30)
 	return saleInfos
 
 

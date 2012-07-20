@@ -31,28 +31,44 @@ $def with (saleInfo)
 </div>
 
 <script>
-	$$(document).ready(function(){
-		$("#pr_form_bth").click(function(){
-			$$.ajax({
-				type:"POST",
-				url:"/product/$:saleInfo.get('info_id')",
-				dataType:"json",
-				data:$$("#pr_form").serialize() ,
-				success:function(obj){
-					if(obj.rsCode>=0){
-						//出价成功
-						alert("出价成功");
-					}else{
-						alert(obj.Msg);
-					}
-				},
-				error:function(obj){
-					alert("服务器出错!");
-				}
-			});
+	if(typeof tostats == "undefined"){
+		tostats = [];
+	}
+	tostats.push(function(){
 
+		$$(document).ready(function(){
+			$$("#pr_form_btn").click(function(){
+				$$.ajax({
+					type:"POST",
+					url:"/product/$:saleInfo.get('info_id')",
+					dataType:"json",
+					data:$$("#pr_form").serialize() ,
+					success:function(obj){
+						if(obj.rsCode>=0){
+							//出价成功
+							alert("出价成功");
+						}else{
+							alert(obj.Msg);
+						}
+					},
+					error:function(obj){
+						alert("服务器出错!");
+					}
+				});
+	
+			});
+	
 		});
 
+		setInterval(function(){
+				$$.ajax({
+					type:"POST",
+					url:"/product/get_salelist/$:saleInfo.get('info_id')",
+					success:function(msg){
+
+					}
+				});
+		},10);
 	});
 </script>
 
