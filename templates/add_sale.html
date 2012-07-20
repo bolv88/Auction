@@ -39,10 +39,38 @@
 					</div>
 				</div>
 				<div class="form-actions">
-					<button class="btn btn-primary" type="submit">提交</button>
+					<button class="btn btn-primary" type="button" id="submit_btn">提交</button>
 				</div>
 			</fieldset>
 		</form>
 
 	</div>
+	<script>
+	if(typeof tostats == "undefined"){
+		tostats = [];
+	}
+	tostats.push(function(){
+		$$("#submit_btn").click(function(){
+			$$.ajax({
+				type:"POST",
+					url:"/account/add_sale",
+					dataType:"json",
+					data:$$(this).parents("form:first").serialize() ,
+					success:function(obj){
+						if(obj.rsCode>=0){
+							//出价成功
+							alert("添加成功");
+							location.href="/account/sale";
+						}else{
+							alert(obj.Msg);
+						}
+					},
+					error:function(obj){
+						alert("服务器出错!");
+					}
+
+			});
+		});
+	});
+	</script>
 

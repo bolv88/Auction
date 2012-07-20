@@ -18,7 +18,9 @@ urls = (
 	    '/', 'index',
 		'/login(/.*)?','login',
 		'/logout','logout',
+
 		'/product/(\d*)', 'product',
+		'/product/get_salelist/(\d*)', 'product_sale',
 
 		'/account/sale/?','account_sale',
 		'/account/sale/(\d*)','account_sale',
@@ -59,6 +61,17 @@ def required_login(f=None,redirect = True):
 		return wrapper
 	return decorator
 
+class product_sale:
+	def GET(self,saleId):
+		saleId = int(saleId)
+		if saleId<=0:
+			return "编号错误"
+		saleLists = models.getSaleList(saleId)
+		rs = ''
+		saleLen = len(saleLists)
+		for i in range(0,saleLen/3):
+			rs += "<div>%s %s</div>" % (saleLists[i*3+2], saleLists[i*3])
+		return rs
 #产品
 class product():
 	def GET(self, saleId):
@@ -71,9 +84,12 @@ class product():
 		if len(saleInfos)<1:
 			return "未找到拍品信息"
 
+
+		statRef = models.getStatRef(saleInfos[0])
+
 		return render.base(islogin = session.get('islogin',False), 
 				userInfo = session.get('userInfo',False), 
-				page=views.show_detail(saleInfos[0]))
+				page=views.show_detail(saleInfos[0], statRef))
 
 	@required_login(redirect=False)
 	def POST(self, saleId):
@@ -89,7 +105,7 @@ class product():
 			#解锁
 			print e
 			models.releaseAuctionLock(saleId)
-			return json.dumps({"rsCode":-12, "Msg":"价格设置失败"})
+			return json.dumps({"rsCode":-120, "Msg":"价格设置失败"})
 
 
 	def _setpr(self, saleId):
@@ -123,12 +139,17 @@ class product():
 		#查找当前最高价查看是否高于当前价格
 		maxAuctionPr = models.getMaxAuctionPr(saleId)
 		if maxAuctionPr >= salePr:
-			return {"rsCode":-13, "Msg":"sorry, your price is less than others"}
+			return {"rsCode":-13, "Msg":"你的报价已经比别人低了!"}
 		#查看是否满足最低加价要求
 		perAddMoney = saleInfo.get("per_add_money",0)
 		perAddMoney = int(perAddMoney)
 		if (salePr-maxAuctionPr) <  perAddMoney:
-			return {"rsCode":-14, "Msg":"sorry the min add pr is"+str(perAddMoney)}
+			return {"rsCode":-14, "Msg":"最低加价额度是: "+str(perAddMoney)}
+		#拍卖者本人不能加价
+		userInfo = session.get('userInfo',False)
+		if str(userInfo.get("ID")) == str(saleInfo.get("sale_user_id")):
+			return {"rsCode":-14, "Msg":"物品拍卖者自己不能加价!"}
+			
 		#save the money
 		models.addSaleList(saleId, salePr)
 		return {"rsCode":1, "Msg":"success: "+str(salePr)}
@@ -192,7 +213,7 @@ class account_buy:
 
 class index:
 	def GET(self,name=''):
-		latestSales = models.getLatestSale(3)
+		latestSales = models.getLatestSale(20)
 		return render.base(islogin = session.get('islogin',False), userInfo = session.get('userInfo',False), 
 				page=views.index_data(latestSales))
 

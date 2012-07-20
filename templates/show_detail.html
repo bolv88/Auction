@@ -1,4 +1,4 @@
-$def with (saleInfo)
+$def with (saleInfo,statRef)
 
 <div class="container">
 	<div class="well">
@@ -16,15 +16,19 @@ $def with (saleInfo)
 			结束时间: $:saleInfo.get("endtime")<br/>
 		</div>
 		<div class="span5 well">
-			<form class="form-inline" id="pr_form">
-				<input class="input-medium" name="pr" type="text">
-				<button class="btn" id="pr_form_btn" type="button">出价</button>
-			</form>
 
-			<p>出价历史:</p>
+			$if statRef.get("Stat") == 3:
+				<form class="form-inline" id="pr_form">
+					<input class="input-medium" name="pr" type="text">
+					<button class="btn" id="pr_form_btn" type="button">出价</button>
+				</form>
+			$else:
+				<h3 style='color:red'>$:statRef.get("Msg")</h3>
+
+			<p>最近出价历史:</p>
 			<div id="pr_history">
-				<p>起拍价: $:saleInfo.get("start_money")</p>
 			</div>
+			<p>起拍价: $:saleInfo.get("start_money")</p>
 			
 		</div>
 	</div>
@@ -47,6 +51,7 @@ $def with (saleInfo)
 						if(obj.rsCode>=0){
 							//出价成功
 							alert("出价成功");
+							listHistory();
 						}else{
 							alert(obj.Msg);
 						}
@@ -59,16 +64,19 @@ $def with (saleInfo)
 			});
 	
 		});
-
-		setInterval(function(){
+		var listHistory = function(){
 				$$.ajax({
-					type:"POST",
+					type:"GET",
+					cache: false,
 					url:"/product/get_salelist/$:saleInfo.get('info_id')",
+					dataType:"html",
 					success:function(msg){
-
+						$$("#pr_history").html(msg);
 					}
 				});
-		},10);
+		}
+		listHistory();
+		setInterval(listHistory, 10000);
 	});
 </script>
 

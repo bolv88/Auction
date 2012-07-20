@@ -19,8 +19,8 @@ $def with (saleInfos)
 		<tbody>
 		$for info in saleInfos:
 			<tr>
-				<td>$info.get('info_id')</td>
-				<td>$info.get('product_name')</td>
+				<td><a href="/product/$:info.get('info_id')">$info.get('info_id')</a></td>
+				<td><a href="/product/$:info.get('info_id')">$info.get('product_name')</a></td>
 				<td>$info.get('starttime')</td>
 				<td>$info.get('endtime')</td>
 				<td>$info.get('start_money')</td>

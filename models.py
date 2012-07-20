@@ -55,6 +55,16 @@ def getSaleList(infoId):
 	saleInfos = rdb.lrange(config.redisdb_config['salepr_list_pre']+str(infoId), 0, 30)
 	return saleInfos
 
+def getStatRef(saleInfo):
+	nowTime = time.strftime("%Y-%m-%d %H:%M:%S",time.localtime(time.time()))
+	if nowTime < saleInfo.get("starttime"):
+		return {"Stat":1, "Msg":"等待拍卖开始"}
+
+	if nowTime > saleInfo.get("endtime"):
+		return {"Stat":2, "Msg":"拍卖时间已过"}
+
+	return {"Stat":3, "Msg":"正在拍卖"}
+
 
 def save_sale_info(product_name, starttime, endtime, start_money, per_add_money,product_desc):
 	userInfo = getUserInfo()
@@ -72,7 +82,8 @@ def save_sale_info(product_name, starttime, endtime, start_money, per_add_money,
 			"endtime":endtime,
 			"start_money":start_money,
 			"per_add_money":per_add_money,
-			"product_desc":product_desc
+			"product_desc":product_desc,
+			"sale_user_id":userInfo.get('ID')
 		}
 	rdb.hmset(config.redisdb_config['sale_info_pre']+str(info_id),saleInfo)
 	

@@ -22,5 +22,5 @@ def list_buy(buyInfos):
 def login_form(jumpPath):
 	return render.login_form(jumpPath)
 
-def show_detail(saleInfo):
-	return render.show_detail(saleInfo)
+def show_detail(saleInfo, statRef):
+	return render.show_detail(saleInfo, statRef)

@@ -9,7 +9,7 @@ $def with (islogin,userInfo,page)
     <meta name="author" content="">
 
     <!-- Le styles -->
-    <link href="/static/css/bootstrap.css" rel="stylesheet">
+    <link href="/static/css/foutoubangpaimai.css" rel="stylesheet">
     <style type="text/css">
       body {
         padding-top: 60px;
@@ -42,7 +42,8 @@ $def with (islogin,userInfo,page)
 							<span class="caret"></span>
 						</a>
 						<div class="dropdown-menu">
-							<li><a href="/account">我的账户</a></li>
+							<li><a href="/account/sale">我拍卖的物品</a></li>
+							<li><a href="/account/sale">我拍卖的物品</a></li>
 							<li class="divider"></li>
 							<li><a href="/logout">退出</a></li>
 						</div>
@@ -56,10 +57,10 @@ $def with (islogin,userInfo,page)
 							<a href="/" >首页</a>
 						</li>
 						<li>
-							<a href="/account/sale">我拍卖的</a>
+							<a href="/account/sale">我拍卖的物品</a>
 						</li>
 						<li>
-							<a href="/account/buy">我购买到的</a>
+							<a href="/account/buy">我拍卖成功的</a>
 						</li>
 					</ul>
 				</div>
@@ -96,7 +97,7 @@ $def with (islogin,userInfo,page)
 		</div>
 	</div>
 	<script src="/static/js/jquery-1.7.2.min.js"></script>
-	<script src="/static/js/bootstrap.js"></script>
+	<script src="/static/js/foutoubangpaimai.js"></script>
 	<script>
 		$$('.dropdown-toggle').dropdown();
 		$$('.mylogin').click(function(){
