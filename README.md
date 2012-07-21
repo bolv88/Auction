@@ -22,3 +22,11 @@ think
 ===========
 1. 叽歪功能(商品评论)
 
+install
+===========
+needs:
+	python 2.7+
+	easy_install web.py
+	apt-get install redis-server
+	apt-get install python-redis
+	apt-get install python-mysqldb

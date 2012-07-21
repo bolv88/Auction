@@ -27,6 +27,15 @@ $def with (islogin,userInfo,page)
 
     <!-- Le fav and touch icons -->
     <link rel="shortcut icon" href="../assets/ico/favicon.ico">
+    <script type="text/javascript">
+	var cjsscript = document.createElement('script');
+	cjsscript.src = "/static/js/control.js";
+	var cjssib = document.getElementsByTagName('script')[0];
+	cjssib.parentNode.insertBefore(cjsscript, cjssib);
+    </script>
+    <script type="text/cjs" data-cjssrc="/static/js/lazyload.js"></script>
+    <script type="text/cjs" data-cjssrc="/static/js/jquery-1.7.2.min.js"></script>
+    <script type="text/cjs" data-cjssrc="/static/js/foutoubangpaimai.uncompressed.js"></script>
     
   </head>
   <body>
@@ -96,9 +105,8 @@ $def with (islogin,userInfo,page)
 			<a href="#" class="btn btn-primary" id="login_submit">登陆</a>
 		</div>
 	</div>
-	<script src="/static/js/jquery-1.7.2.min.js"></script>
-	<script src="/static/js/foutoubangpaimai.js"></script>
-	<script>
+	<script type="text/cjs" >
+    	//require(["/static/js/jquery-1.7.2.min.js", "/static/js/foutoubangpaimai.uncompressed.js"],function(){
 		$$('.dropdown-toggle').dropdown();
 		$$('.mylogin').click(function(){
 			$$("#myModal").modal();

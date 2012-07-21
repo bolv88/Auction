@@ -49,28 +49,38 @@
 	if(typeof tostats == "undefined"){
 		tostats = [];
 	}
-	tostats.push(function(){
-		$$("#submit_btn").click(function(){
-			$$.ajax({
-				type:"POST",
-					url:"/account/add_sale",
-					dataType:"json",
-					data:$$(this).parents("form:first").serialize() ,
-					success:function(obj){
-						if(obj.rsCode>=0){
-							//出价成功
-							alert("添加成功");
-							location.href="/account/sale";
-						}else{
-							alert(obj.Msg);
-						}
-					},
-					error:function(obj){
-						alert("服务器出错!");
-					}
+    		LazyLoad.css(["/static/css/datepicker.css"]);
+		LazyLoad.js(["/static/js/date/bootstrap-datepicker.js","/static/js/date/locales/bootstrap-datepicker.zh-CN.js"],function(){
+		$$(document).ready(function(){
+			$$('#input02,#input03').datepicker({
+			    format: 'yyyy-mm-dd',
+			    language: 'zh-CN'
+			}).on("changeDate", function(){
+				$$(this).datepicker('hide');
 
 			});
+			$$("#submit_btn").click(function(){
+				$$.ajax({
+					type:"POST",
+						url:"/account/add_sale",
+						dataType:"json",
+						data:$$(this).parents("form:first").serialize() ,
+						success:function(obj){
+							if(obj.rsCode>=0){
+								//出价成功
+								alert("添加成功");
+								location.href="/account/sale";
+							}else{
+								alert(obj.Msg);
+							}
+						},
+						error:function(obj){
+							alert("服务器出错!");
+						}
+	
+				});
+			});
 		});
-	});
+		});
 	</script>
 

@@ -62,9 +62,7 @@ $def with (saleInfo,statRef)
 				});
 	
 			});
-	
-		});
-		var listHistory = function(){
+			var listHistory = function(){
 				$$.ajax({
 					type:"GET",
 					cache: false,
@@ -74,9 +72,11 @@ $def with (saleInfo,statRef)
 						$$("#pr_history").html(msg);
 					}
 				});
-		}
-		listHistory();
-		setInterval(listHistory, 10000);
+			}
+			listHistory();
+			setInterval(listHistory, 10000);
+
+		});
 	});
 </script>
 

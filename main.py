@@ -30,6 +30,13 @@ urls = (
 
 		'/account/buy/?','account_buy',
 		'/account/buy/(\d*)','account_buy',
+		'/t1','t1',
+		'/t2','t2',
+		'/t3','t3',
+	
+		'/account/add_sale_r/?', 'add_sale_requirejs',
+		'/account/add_sale_c/?', 'add_sale_controllerjs',
+		'/account/add_sale_l/?', 'add_sale_lazy',
 	)
 
 okbuydb = None
@@ -43,6 +50,7 @@ else:
 	session = web.config._session
 
 render = web.template.render('templates/')
+
 
 def required_login(f=None,redirect = True):
 	def decorator(func):
@@ -60,7 +68,13 @@ def required_login(f=None,redirect = True):
 				return func(req, *args, **kwds)
 		return wrapper
 	return decorator
-
+class t1:
+	def GET(self):
+		time.sleep(10)
+		return "console.log('t1')"
+class t2:
+	def GET(self):
+		return "console.log('t2')"
 class product_sale:
 	def GET(self,saleId):
 		saleId = int(saleId)
@@ -173,6 +187,25 @@ class add_sale():
 				input.get("product_desc","")
 				)
 		return json.dumps(save_rs)
+class add_sale_requirejs():
+	@required_login()
+	def GET(self):
+		return render.base_r(islogin = session.get('islogin',False), 
+				userInfo = session.get('userInfo',False), 
+				page=views.add_sale())
+class add_sale_controllerjs():
+	@required_login()
+	def GET(self):
+		return render.base_c(islogin = session.get('islogin',False), 
+				userInfo = session.get('userInfo',False), 
+				page=views.add_sale())
+class add_sale_lazy():
+	@required_login()
+	def GET(self):
+		return render.base_l(islogin = session.get('islogin',False), 
+				userInfo = session.get('userInfo',False), 
+				page=views.add_sale())
+
 
 class account_sale:
 	@required_login()
