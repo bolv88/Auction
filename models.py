@@ -66,7 +66,8 @@ def getStatRef(saleInfo):
 	return {"Stat":3, "Msg":"正在拍卖"}
 
 
-def save_sale_info(product_name, starttime, endtime, start_money, per_add_money,product_desc):
+def save_sale_info(product_name, starttime, starttime_hour,
+		endtime, endtime_hour, start_money, per_add_money,product_desc):
 	userInfo = getUserInfo()
 	if not userInfo:
 		return {"rsCode":-1, "Msg":"用户未登录"}
@@ -74,6 +75,48 @@ def save_sale_info(product_name, starttime, endtime, start_money, per_add_money,
 
 	info_id = rdb.incr(config.redisdb_config['product_key'])
 	
+	#验证时间
+	from dateutil.parser import parse
+	try:
+		starttime = starttime.strip()
+		starttime = starttime + " " + starttime_hour+":00:00"
+		endtime = endtime.strip()
+		endtime = endtime+" "+endtime_hour+":00:00"
+		stime = int(parse(starttime).strftime("%s"))
+		etime = int(parse(endtime).strftime("%s"))
+		if etime<stime:
+			return {"rsCode":-2, "Msg":"结束时间小于开始时间。。。"}
+		elif etime<time.time():
+			return {"rsCode":-3, "Msg":"结束时间小于当前时间。。。"}
+	except Exception, e:
+		return {"rsCode":-4, "Msg":"开始时间或结束时间格式错误"}
+
+	#验证起始金额跟最低加价
+	try:
+		start_money = int(start_money)
+		if start_money<0 :
+			return {"rsCode": -5, "Msg":"起始金额必须为正整数"}
+		if start_money>4000 :
+			return {"rsCode": -6, "Msg":"起始金额暂时不能高于4000"}
+	except Exception, e:
+		return {"rsCode": -5, "Msg":"起始金额必须为正整数"}
+
+	try:
+		per_add_money = int(per_add_money)
+		if per_add_money<0 :
+			return {"rsCode": -7, "Msg":"最低加价必须为正整数"}
+		if per_add_money>100 :
+			return {"rsCode": -8, "Msg":"最低加价必须不能大于100"}
+	except Exception, e:
+		return {"rsCode": -7, "Msg":"最低加价必须为正整数"}
+
+	#验证名称与描述
+	if len(product_name)<1:
+		return {"rsCode": -9, "Msg":"请输入产品名称"}
+	if len(product_desc)<20:
+		return {"rsCode": -10, "Msg":"产品描述必须大于10个字"}
+		
+
 	rdb.lpush(config.redisdb_config['saleids_key'], info_id)
 	saleInfo = {
 			"info_id":info_id,

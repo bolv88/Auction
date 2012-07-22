@@ -9,15 +9,23 @@
 					</div>
 				</div>
 				<div class="control-group">
-					<label class="control-label" for="input02">拍卖开始时间</label>
+					<label class="control-label input-medium" for="input02">拍卖开始时间</label>
 					<div class="controls">
-						<input class="input-xlarge" type="text" id="input02" name="starttime" placeholder="YYYY-mm-dd HH:ii:ss"/>
+						<input class="input-medium" type="text" id="input02" name="starttime" placeholder="点击选择日期"/>
+						日
+						<input  class="input-small" type="text" id="input02-1" name="starttime-hour" placeholder="输入小时"/>
+						时
+
 					</div>
 				</div>
 				<div class="control-group">
 					<label class="control-label" for="input03">拍卖结束时间</label>
 					<div class="controls">
-						<input  class="input-xlarge" type="text" id="input03" name="endtime" placeholder="YYYY-mm-dd HH:ii:ss"/>
+						<input  class="input-medium" type="text" id="input03" name="endtime" placeholder="点击选择日期"/>
+						日
+						<input  class="input-small" type="text" id="input03-1" name="endtime-hour" placeholder="输入小时"/>
+						时
+
 					</div>
 				</div>
 				<div class="control-group">
@@ -38,6 +46,14 @@
 						<textarea  class="input-xlarge" id="input06" name="product_desc" placeholder="宝贝描述"></textarea>
 					</div>
 				</div>
+				<div class="control-group">
+					<label class="control-label">图片上传</label>
+					<div class="controls">
+						<div id="upload_div"></div>
+						<div id="fsUploadProgress"></div>
+						<button id="btnCancel">cancel</button>
+					</div>
+				</div>
 				<div class="form-actions">
 					<button class="btn btn-primary" type="button" id="submit_btn">提交</button>
 				</div>
@@ -46,41 +62,105 @@
 
 	</div>
 	<script>
-	if(typeof tostats == "undefined"){
-		tostats = [];
-	}
-    		LazyLoad.css(["/static/css/datepicker.css"]);
-		LazyLoad.js(["/static/js/date/bootstrap-datepicker.js","/static/js/date/locales/bootstrap-datepicker.zh-CN.js"],function(){
-		$$(document).ready(function(){
-			$$('#input02,#input03').datepicker({
-			    format: 'yyyy-mm-dd',
-			    language: 'zh-CN'
-			}).on("changeDate", function(){
-				$$(this).datepicker('hide');
+		if(typeof tostats == "undefined"){
+			tostats = [];
+		}
+		LazyLoad.js(["/static/js/up/swfupload.js",
+				"/static/js/up/fileprogress.js",
+				"/static/js/up/handlers.js",
+				"/static/js/up/swfupload.queue.js",
+				"/static/js/up/swfupload.cookies.js"
 
-			});
-			$$("#submit_btn").click(function(){
-				$$.ajax({
-					type:"POST",
-						url:"/account/add_sale",
-						dataType:"json",
-						data:$$(this).parents("form:first").serialize() ,
-						success:function(obj){
-							if(obj.rsCode>=0){
-								//出价成功
-								alert("添加成功");
-								location.href="/account/sale";
-							}else{
-								alert(obj.Msg);
-							}
-						},
-						error:function(obj){
-							alert("服务器出错!");
-						}
+				], function(){
+			function getCookie(name)//取cookies函数        
+	        {
+                var arr = document.cookie.match(new RegExp("(^| )"+name+"=([^;]*)(;|$$)"));
+                 if(arr != null) return unescape(arr[2]); return "";
+
+    	    }
+
+		    $$(document).ready( function() {
+				var settings = {
+					flash_url : "/static/js/up/swfupload.swf",
+					upload_url: "/img_upload",
+					file_post_name: "myfile",
+		            post_params: {"enctype":"multipart/form-data"},
+					file_size_limit : "3000 K",
+					file_types : "*.*",
+					file_types_description : "All Files",
+					file_upload_limit : 0,
+					file_queue_limit : 1,
+					custom_settings : {
+						progressTarget : "fsUploadProgress",
+						cancelButtonId : "btnCancel",
+						upload_successful: false
+					},
+					//file_dialog_start_handler: fileDialogStart,
+					
+					debug: true,
+		
+					// Button settings
+					button_image_url: "/static/js/up/up_bg.png",
+					button_width: "61",
+					button_height: "22",
+					button_placeholder_id: "upload_div",
+					button_text: '<span class="theFont">浏览</span>',
+					button_text_style: ".theFont { font-size: 13;}",
+					button_text_left_padding: 12,
+					button_text_top_padding: 3,
+					
+					// The event handler functions are defined in handlers.js
+					file_queued_handler : fileQueued,
+					file_queue_error_handler : fileQueueError,
+					file_dialog_complete_handler : fileDialogComplete,
+					//upload_start_handler : uploadStart,
+					upload_progress_handler : uploadProgress,
+					upload_error_handler : uploadError,
+					upload_success_handler : uploadSuccess,
+					upload_complete_handler : uploadComplete,
+					//queue_complete_handler : queueComplete	// Queue plugin event
+				};
+		
+		                    
+		            swfu = new SWFUpload(settings);
+		    });
+
+
+					});
+		LazyLoad.css(["/static/css/datepicker.css"]);
+		LazyLoad.js(["/static/js/date/bootstrap-datepicker.js",
+				"/static/js/date/locales/bootstrap-datepicker.zh-CN.js"],function(){
+			$$(document).ready(function(){
+				$$('#input02,#input03').datepicker({
+				    format: 'yyyy-mm-dd',
+				    language: 'zh-CN',
+					startDate: new Date((new Date()).getTime()-86400*1000)
+				}).on("changeDate", function(){
+					$$(this).datepicker('hide');
 	
 				});
+				$$("#submit_btn").click(function(){
+					$$.ajax({
+						type:"POST",
+							url:"/account/add_sale",
+							dataType:"json",
+							data:$$(this).parents("form:first").serialize() ,
+							success:function(obj){
+								if(obj.rsCode>=0){
+									//出价成功
+									alert("添加成功");
+									location.href="/account/sale";
+								}else{
+									alert(obj.Msg);
+								}
+							},
+							error:function(obj){
+								alert("服务器出错!");
+							}
+		
+					});
+				});
 			});
-		});
 		});
 	</script>
 

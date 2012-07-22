@@ -14,6 +14,15 @@ import time
 
 from functools import wraps
 
+web.config.session_parameters['cookie_name'] = 'futoubangid'
+web.config.session_parameters['cookie_domain'] = 'localhost'
+web.config.session_parameters.timeout = 86400*2 #24 * 60 * 60, # 24 hours   in seconds
+#web.config.session_parameters['ignore_expiry'] = True
+#web.config.session_parameters['ignore_change_ip'] = True
+web.config.session_parameters['secret_key'] = 'fLjUfxqXtfNoIldA0A0J'
+web.config.session_parameters['expired_message'] = 'Session expired'
+web.config.session_parameters['httponly'] = False
+
 urls = (
 	    '/', 'index',
 		'/login(/.*)?','login',
@@ -30,10 +39,9 @@ urls = (
 
 		'/account/buy/?','account_buy',
 		'/account/buy/(\d*)','account_buy',
-		'/t1','t1',
-		'/t2','t2',
-		'/t3','t3',
 	
+		'/img_upload', 'img_upload',
+
 		'/account/add_sale_r/?', 'add_sale_requirejs',
 		'/account/add_sale_c/?', 'add_sale_controllerjs',
 		'/account/add_sale_l/?', 'add_sale_lazy',
@@ -44,7 +52,7 @@ app = web.application(urls, globals())
 
 web.config.debug = False
 if web.config.get('_session') is None:
-	session = web.session.Session(app, rediswebpy.RedisStore(), initializer={'count': 0})
+	session = web.session.Session(app, rediswebpy.RedisStore(initial_flush=False), initializer={'count': 0})
 	web.config._session = session
 else:
 	session = web.config._session
@@ -68,13 +76,17 @@ def required_login(f=None,redirect = True):
 				return func(req, *args, **kwds)
 		return wrapper
 	return decorator
-class t1:
-	def GET(self):
-		time.sleep(10)
-		return "console.log('t1')"
-class t2:
-	def GET(self):
-		return "console.log('t2')"
+class img_upload():
+	def POST(self):
+		x = web.input()
+		session._load(x.get("futoubangid"))
+		filename = "123.jpg"
+		filedir = "/tmp/up/"+filename
+		fp = open(filedir,'w')
+		fp.write(x.myfile)
+		print session.get('userInfo',False)
+		fp.close()
+		return 'OK'
 class product_sale:
 	def GET(self,saleId):
 		saleId = int(saleId)
@@ -181,7 +193,9 @@ class add_sale():
 		save_rs = models.save_sale_info(
 				input.get("product_name",""),
 				input.get("starttime",""),
+				input.get("starttime-hour",""),
 				input.get("endtime",""),
+				input.get("endtime-hour",""),
 				input.get("start_money",""),
 				input.get("per_add_money",""),
 				input.get("product_desc","")
@@ -246,6 +260,8 @@ class account_buy:
 
 class index:
 	def GET(self,name=''):
+		web.setcookie('age', 908, 3600)
+		print web.cookies().get("webpy_session_id")
 		latestSales = models.getLatestSale(20)
 		return render.base(islogin = session.get('islogin',False), userInfo = session.get('userInfo',False), 
 				page=views.index_data(latestSales))

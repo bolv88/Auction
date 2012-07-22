@@ -36,37 +36,39 @@ $def with (islogin,userInfo,page)
   <body>
 	<div class="navbar navbar-fixed-top">
 		<div class="navbar-inner">
-			<div class="container-fluid">
-				<a class="brand" href="#">斧头帮拍卖行</a>
-				<div class="btn-group pull-right">
-					$if islogin:
-						<a href="#" data-toggle="dropdown" class="btn dropdown-toggle">
-							<i class="icon-user"></i>
-								$:userInfo.get('Name')
-							<span class="caret"></span>
-						</a>
-						<div class="dropdown-menu">
-							<li><a href="/account/sale">我拍卖的物品</a></li>
-							<li><a href="/account/sale">我拍卖的物品</a></li>
-							<li class="divider"></li>
-							<li><a href="/logout">退出</a></li>
-						</div>
-					$else:
-						<a href="#" class="mylogin btn" data toggle="modal">Login</a>
-					
-				</div>
-				<div class="nav-collapse">
-					<ul class="nav">
-						<li>
-							<a href="/" >首页</a>
-						</li>
-						<li>
-							<a href="/account/sale">我拍卖的物品</a>
-						</li>
-						<li>
-							<a href="/account/buy">我拍卖成功的</a>
-						</li>
-					</ul>
+			<div class="container">
+				<div class="container-fluid">
+					<a class="brand" href="#">斧头帮拍卖行</a>
+					<div class="btn-group pull-right">
+						$if islogin:
+							<a href="#" data-toggle="dropdown" class="btn dropdown-toggle">
+								<i class="icon-user"></i>
+									$:userInfo.get('Name')
+								<span class="caret"></span>
+							</a>
+							<div class="dropdown-menu">
+								<li><a href="/account/sale">我拍卖的物品</a></li>
+								<li><a href="/account/sale">我拍卖的物品</a></li>
+								<li class="divider"></li>
+								<li><a href="/logout">退出</a></li>
+							</div>
+						$else:
+							<a href="#" class="mylogin btn" data toggle="modal">Login</a>
+						
+					</div>
+					<div class="nav-collapse">
+						<ul class="nav">
+							<li>
+								<a href="/" >首页</a>
+							</li>
+							<li>
+								<a href="/account/sale">我拍卖的物品</a>
+							</li>
+							<li>
+								<a href="/account/buy">我拍卖成功的</a>
+							</li>
+						</ul>
+					</div>
 				</div>
 			</div>
 		</div>
@@ -76,10 +78,12 @@ $def with (islogin,userInfo,page)
 	</div>
 
 
-	<hr/>
-	<footer>
-	<p>@blublu 2012</p>
-	</footer>
+	<div class="container">
+		<hr/>
+		<footer>
+			<p>@blublu 2012</p>
+		</footer>
+	</div>
 
 
 	<div class="modal hide" id="myModal">
