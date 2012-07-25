@@ -1,3 +1,4 @@
+$def with (uploadDomain)
 	<div class="hero-unit" style="padding:20px 60px">
 		<h2 style="color:#999">添加拍卖商品</h2>
 		<form class="form-horizontal" method="post" action="/account/add_sale">
@@ -65,24 +66,26 @@
 		if(typeof tostats == "undefined"){
 			tostats = [];
 		}
-		LazyLoad.js(["/static/js/up/swfupload.js",
-				"/static/js/up/fileprogress.js",
-				"/static/js/up/handlers.js",
-				"/static/js/up/swfupload.queue.js",
-				"/static/js/up/swfupload.cookies.js"
+		var uploadDomain = "$:uploadDomain";
+		LazyLoad.js([
+				uploadDomain+"/static/js/up/swfupload.js",
+				uploadDomain+"/static/js/up/fileprogress.js",
+				uploadDomain+"/static/js/up/handlers.js",
+				uploadDomain+"/static/js/up/swfupload.queue.js",
+				uploadDomain+"/static/js/up/swfupload.cookies.js"
 
 				], function(){
 			function getCookie(name)//取cookies函数        
 	        {
                 var arr = document.cookie.match(new RegExp("(^| )"+name+"=([^;]*)(;|$$)"));
-                 if(arr != null) return unescape(arr[2]); return "";
-
+                 if(arr != null) return unescape(arr[2]);
+				 return "";
     	    }
 
 		    $$(document).ready( function() {
 				var settings = {
-					flash_url : "/static/js/up/swfupload.swf",
-					upload_url: "/img_upload",
+					flash_url : uploadDomain+"/static/js/up/swfupload.swf",
+					upload_url: uploadDomain+"/upload",
 					file_post_name: "myfile",
 		            post_params: {"enctype":"multipart/form-data"},
 					file_size_limit : "3000 K",
@@ -95,12 +98,12 @@
 						cancelButtonId : "btnCancel",
 						upload_successful: false
 					},
-					//file_dialog_start_handler: fileDialogStart,
+					file_dialog_start_handler: fileDialogStart,
 					
 					debug: true,
 		
 					// Button settings
-					button_image_url: "/static/js/up/up_bg.png",
+					button_image_url: uploadDomain+"/static/js/up/up_bg.png",
 					button_width: "61",
 					button_height: "22",
 					button_placeholder_id: "upload_div",
@@ -113,12 +116,12 @@
 					file_queued_handler : fileQueued,
 					file_queue_error_handler : fileQueueError,
 					file_dialog_complete_handler : fileDialogComplete,
-					//upload_start_handler : uploadStart,
+					upload_start_handler : uploadStart,
 					upload_progress_handler : uploadProgress,
 					upload_error_handler : uploadError,
 					upload_success_handler : uploadSuccess,
 					upload_complete_handler : uploadComplete,
-					//queue_complete_handler : queueComplete	// Queue plugin event
+					queue_complete_handler : queueComplete	// Queue plugin event
 				};
 		
 		                    

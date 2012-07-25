@@ -15,7 +15,7 @@ import time
 from functools import wraps
 
 web.config.session_parameters['cookie_name'] = 'futoubangid'
-web.config.session_parameters['cookie_domain'] = 'localhost'
+#web.config.session_parameters['cookie_domain'] = 'localhost'
 web.config.session_parameters.timeout = 86400*2 #24 * 60 * 60, # 24 hours   in seconds
 #web.config.session_parameters['ignore_expiry'] = True
 #web.config.session_parameters['ignore_change_ip'] = True
@@ -260,8 +260,7 @@ class account_buy:
 
 class index:
 	def GET(self,name=''):
-		web.setcookie('age', 908, 3600)
-		print web.cookies().get("webpy_session_id")
+		#print web.cookies().get("webpy_session_id")
 		latestSales = models.getLatestSale(20)
 		return render.base(islogin = session.get('islogin',False), userInfo = session.get('userInfo',False), 
 				page=views.index_data(latestSales))

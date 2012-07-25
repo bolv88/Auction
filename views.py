@@ -11,7 +11,7 @@ def index_data(latestSales):
 	return render.index(latestSales)
 
 def add_sale():
-	return render.add_sale()
+	return render.add_sale(uploadDomain=config.uploadDomain)
 
 def list_sale(saleInfos):
 	return render.my_sale_list(saleInfos)
